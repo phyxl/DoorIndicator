@@ -29,7 +29,7 @@ void setup() {
   getResponse("AT+RST");
   getResponse("AT+CWMODE=3");
   //Serial1.println("AT+CWJAP=\"HobbitHole\",\"inthebeginningtherewerefleas\"");
-  //getResponse();
+  //getResponse("AT+CWJAP=\"HobbitHole\",\"inthebeginningtherewerefleas\"");
   getResponse("AT+CIPMUX=1");
   getResponse("AT+CIPSERVER=1,80");
 
@@ -38,7 +38,8 @@ char w;
 String text = "";
 String requestType = "";
 String URL = "";
-String webpage = "<head>Hello!</head><body>This is ESP</body>";
+String webpage = "<head>Hello!</head><body>This is ESP<br />";
+String eweb = "";
 void loop() {
   // put your main code here, to run repeatedly:
   //Serial1.println("AT+RST");
@@ -76,7 +77,9 @@ void loop() {
         w = Serial1.read();
       }
       Serial.print(URL);
-
+      tft.print(URL);
+      eweb = webpage + URL;
+      eweb += "</body>";
       while(Serial1.available()){
         char v = Serial1.read();
         Serial.write(v);
@@ -85,12 +88,16 @@ void loop() {
       text = "AT+CIPSEND=";
       text += connectionID;
       text += ",";
-      text += webpage.length();
+      text += eweb.length();
       getResponse(text);
-      getResponse(webpage);
+      getResponse(eweb);
       text = "AT+CIPCLOSE=";
       text += connectionID;
       getResponse(text);
+      
+      tft.setCursor(0, 0);
+      tft.fillScreen(ST7735_BLACK);
+      tft.print(URL);
     }
     //text = "";
     while(Serial1.available()){
